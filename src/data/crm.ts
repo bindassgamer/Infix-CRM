@@ -1,0 +1,553 @@
+export type Stage = "New" | "Qualified" | "Proposal" | "Negotiation" | "Won" | "Lost";
+export type Health = "Healthy" | "At risk" | "Churn risk";
+
+export type Account = {
+  id: string;
+  name: string;
+  industry: string;
+  owner: string;
+  retainer: number;
+  health: Health;
+  since: string;
+  services: string[];
+  plan: string;
+  process: string[];
+  nextInvoice: string;
+  paymentStatus: "Paid" | "Due" | "Overdue";
+  contactId: string;
+};
+
+export type Contact = {
+  id: string;
+  name: string;
+  role: string;
+  account: string;
+  email: string;
+  phone: string;
+  channel: string;
+  lastTouch: string;
+  notes: string;
+};
+
+export type Lead = {
+  id: string;
+  name: string;
+  company: string;
+  source: string;
+  stage: Stage;
+  value: number;
+  owner: string;
+  created: string;
+  score: number;
+  need: string;
+  nextStep: string;
+  timeline: { date: string; event: string }[];
+};
+
+export type Resource = {
+  id: string;
+  title: string;
+  type: "Reel" | "Carousel" | "Static" | "Video" | "Template" | "Playbook";
+  account: string;
+  owner: string;
+  status: "Draft" | "In review" | "Approved" | "Published";
+  updated: string;
+  format: string;
+  summary: string;
+};
+
+export type Member = {
+  id: string;
+  name: string;
+  role: string;
+  capacity: number;
+  accounts: number;
+  focus: string;
+  status: "Available" | "Loaded" | "On leave";
+};
+
+export type ScheduleItem = {
+  id: string;
+  day: number;
+  time: string;
+  account: string;
+  title: string;
+  channel: "Instagram" | "YouTube" | "LinkedIn" | "TikTok" | "Newsletter";
+  owner: string;
+  status: "Scheduled" | "Needs approval" | "Published";
+};
+
+export type Notification = {
+  id: string;
+  kind: "payment" | "client" | "system";
+  title: string;
+  detail: string;
+  account: string;
+  when: string;
+  severity: "high" | "medium" | "low";
+};
+
+export const accounts: Account[] = [
+  {
+    id: "ACC-101",
+    name: "Northwind Studios",
+    industry: "Entertainment",
+    owner: "Ira Malhotra",
+    retainer: 4800,
+    health: "Healthy",
+    since: "Mar 2024",
+    services: ["Reels production", "Paid social", "Community"],
+    plan: "Growth retainer — 16 assets / month with 2 campaign sprints per quarter.",
+    process: [
+      "Monthly strategy call, first Tuesday",
+      "Scripts drafted by Wed, approved by Fri",
+      "Shoot day every alternate Monday",
+      "Publish window 9am–11am IST",
+    ],
+    nextInvoice: "1 Sep 2026",
+    paymentStatus: "Paid",
+    contactId: "CON-201",
+  },
+  {
+    id: "ACC-102",
+    name: "Lumen Fitness",
+    industry: "Health & Wellness",
+    owner: "Dev Kapoor",
+    retainer: 3200,
+    health: "At risk",
+    since: "Nov 2024",
+    services: ["Short form", "Influencer ops"],
+    plan: "Performance retainer — 12 shorts / month, CPL target under $4.",
+    process: [
+      "Weekly creative standup, Monday 10am",
+      "UGC creators briefed 10 days ahead",
+      "Ads refreshed every 14 days",
+    ],
+    nextInvoice: "22 Aug 2026",
+    paymentStatus: "Due",
+    contactId: "CON-202",
+  },
+  {
+    id: "ACC-103",
+    name: "Arcadia Realty",
+    industry: "Real Estate",
+    owner: "Ira Malhotra",
+    retainer: 6100,
+    health: "Healthy",
+    since: "Jan 2025",
+    services: ["Property films", "Automation", "CRM nurture"],
+    plan: "Automation-first retainer — listing launches plus WhatsApp nurture flows.",
+    process: [
+      "Listing intake form auto-creates a shoot task",
+      "48h edit turnaround SLA",
+      "Nurture sequence fires on lead capture",
+    ],
+    nextInvoice: "5 Sep 2026",
+    paymentStatus: "Paid",
+    contactId: "CON-203",
+  },
+  {
+    id: "ACC-104",
+    name: "Bluepeak SaaS",
+    industry: "Software",
+    owner: "Sana Rao",
+    retainer: 2500,
+    health: "Churn risk",
+    since: "Jun 2025",
+    services: ["Thought leadership", "Newsletter"],
+    plan: "Starter retainer — 8 LinkedIn posts and 2 newsletters per month.",
+    process: [
+      "Founder interview every fortnight",
+      "Post calendar locked 7 days ahead",
+      "Monthly performance readout",
+    ],
+    nextInvoice: "12 Aug 2026",
+    paymentStatus: "Overdue",
+    contactId: "CON-204",
+  },
+  {
+    id: "ACC-105",
+    name: "Saffron Kitchens",
+    industry: "F&B",
+    owner: "Dev Kapoor",
+    retainer: 3900,
+    health: "Healthy",
+    since: "Feb 2026",
+    services: ["Food films", "Menu launches"],
+    plan: "Launch retainer — 2 menu launches per quarter with always-on reels.",
+    process: [
+      "Quarterly menu shoot, full day",
+      "Weekly reel drop on Thursday",
+      "Local influencer seeding monthly",
+    ],
+    nextInvoice: "28 Aug 2026",
+    paymentStatus: "Due",
+    contactId: "CON-205",
+  },
+];
+
+export const contacts: Contact[] = [
+  {
+    id: "CON-201",
+    name: "Maya Iyer",
+    role: "Head of Brand",
+    account: "Northwind Studios",
+    email: "maya@northwind.studio",
+    phone: "+91 98200 11223",
+    channel: "WhatsApp",
+    lastTouch: "12 Aug 2026",
+    notes: "Prefers async updates. Signs off on scripts personally.",
+  },
+  {
+    id: "CON-202",
+    name: "Rohan Shetty",
+    role: "Growth Lead",
+    account: "Lumen Fitness",
+    email: "rohan@lumenfit.co",
+    phone: "+91 99870 44512",
+    channel: "Email",
+    lastTouch: "9 Aug 2026",
+    notes: "Wants weekly CPL dashboard before the standup.",
+  },
+  {
+    id: "CON-203",
+    name: "Farah Nazir",
+    role: "Marketing Director",
+    account: "Arcadia Realty",
+    email: "farah@arcadia.in",
+    phone: "+91 90040 78899",
+    channel: "Calls",
+    lastTouch: "14 Aug 2026",
+    notes: "Escalate automation issues to her directly, not to sales.",
+  },
+  {
+    id: "CON-204",
+    name: "Tom Brennan",
+    role: "Founder",
+    account: "Bluepeak SaaS",
+    email: "tom@bluepeak.io",
+    phone: "+1 415 220 8871",
+    channel: "Slack",
+    lastTouch: "2 Aug 2026",
+    notes: "Two invoices pending. Needs a renewal conversation this month.",
+  },
+  {
+    id: "CON-205",
+    name: "Anaya Gupta",
+    role: "Ops Manager",
+    account: "Saffron Kitchens",
+    email: "anaya@saffronkitchens.com",
+    phone: "+91 98111 33456",
+    channel: "WhatsApp",
+    lastTouch: "13 Aug 2026",
+    notes: "Coordinates shoot logistics and outlet access.",
+  },
+];
+
+export const leads: Lead[] = [
+  {
+    id: "LEAD-301",
+    name: "Priya Menon",
+    company: "Verve Cosmetics",
+    source: "Referral",
+    stage: "Proposal",
+    value: 5400,
+    owner: "Ira Malhotra",
+    created: "28 Jul 2026",
+    score: 82,
+    need: "Launch campaign for a new skincare line across reels and creator seeding.",
+    nextStep: "Send revised proposal with 3-month sprint pricing by 18 Aug.",
+    timeline: [
+      { date: "28 Jul", event: "Inbound referral from Northwind" },
+      { date: "31 Jul", event: "Discovery call — 40 min" },
+      { date: "6 Aug", event: "Shared creative teardown" },
+      { date: "12 Aug", event: "Proposal v1 sent" },
+    ],
+  },
+  {
+    id: "LEAD-302",
+    name: "Kabir Sethi",
+    company: "Orbit Motors",
+    source: "LinkedIn",
+    stage: "Qualified",
+    value: 8200,
+    owner: "Sana Rao",
+    created: "4 Aug 2026",
+    score: 74,
+    need: "Monthly showroom films plus automated test-drive follow-ups.",
+    nextStep: "Book automation workshop with their CRM admin.",
+    timeline: [
+      { date: "4 Aug", event: "LinkedIn DM reply" },
+      { date: "8 Aug", event: "Qualification call" },
+    ],
+  },
+  {
+    id: "LEAD-303",
+    name: "Nadia Hassan",
+    company: "Terra Travel",
+    source: "Webinar",
+    stage: "Negotiation",
+    value: 6700,
+    owner: "Dev Kapoor",
+    created: "16 Jul 2026",
+    score: 88,
+    need: "Always-on destination content with UGC library and paid amplification.",
+    nextStep: "Align on 6-month lock-in versus quarterly rolling contract.",
+    timeline: [
+      { date: "16 Jul", event: "Webinar signup" },
+      { date: "21 Jul", event: "Strategy session" },
+      { date: "5 Aug", event: "Pricing negotiation round 1" },
+    ],
+  },
+  {
+    id: "LEAD-304",
+    name: "Aditya Rane",
+    company: "Nimbus Fintech",
+    source: "Cold outbound",
+    stage: "New",
+    value: 3100,
+    owner: "Sana Rao",
+    created: "13 Aug 2026",
+    score: 41,
+    need: "Explainer video series for a new payments product.",
+    nextStep: "Qualification call to confirm budget owner.",
+    timeline: [{ date: "13 Aug", event: "Replied to outbound sequence" }],
+  },
+  {
+    id: "LEAD-305",
+    name: "Elena Costa",
+    company: "Maison Decor",
+    source: "Instagram",
+    stage: "Won",
+    value: 4500,
+    owner: "Ira Malhotra",
+    created: "2 Jul 2026",
+    score: 95,
+    need: "Interior styling reels and seasonal catalogue films.",
+    nextStep: "Kickoff scheduled — move to onboarding checklist.",
+    timeline: [
+      { date: "2 Jul", event: "DM enquiry" },
+      { date: "9 Jul", event: "Proposal sent" },
+      { date: "1 Aug", event: "Contract signed" },
+    ],
+  },
+  {
+    id: "LEAD-306",
+    name: "Vikram Nair",
+    company: "Peak Logistics",
+    source: "Referral",
+    stage: "Lost",
+    value: 2900,
+    owner: "Dev Kapoor",
+    created: "19 Jun 2026",
+    score: 33,
+    need: "Recruitment content for driver hiring.",
+    nextStep: "Revisit in Q4 — went with an in-house hire.",
+    timeline: [
+      { date: "19 Jun", event: "Referral intro" },
+      { date: "26 Jun", event: "Scope call" },
+      { date: "14 Jul", event: "Passed on proposal" },
+    ],
+  },
+];
+
+export const resources: Resource[] = [
+  {
+    id: "RES-401",
+    title: "Reel hook library — 40 openers",
+    type: "Playbook",
+    account: "Shared",
+    owner: "Ira Malhotra",
+    status: "Approved",
+    updated: "11 Aug 2026",
+    format: "Notion doc",
+    summary: "Tested hook formats grouped by industry with retention benchmarks.",
+  },
+  {
+    id: "RES-402",
+    title: "Northwind August reel batch",
+    type: "Reel",
+    account: "Northwind Studios",
+    owner: "Zoya Khan",
+    status: "In review",
+    updated: "13 Aug 2026",
+    format: "6 × 9:16 MP4",
+    summary: "Batch of six reels covering behind-the-scenes and cast spotlights.",
+  },
+  {
+    id: "RES-403",
+    title: "Lumen UGC creator brief",
+    type: "Template",
+    account: "Lumen Fitness",
+    owner: "Dev Kapoor",
+    status: "Approved",
+    updated: "7 Aug 2026",
+    format: "Docx + shotlist",
+    summary: "Creator brief template with do/don't framing and usage rights clause.",
+  },
+  {
+    id: "RES-404",
+    title: "Arcadia listing film — Powai tower",
+    type: "Video",
+    account: "Arcadia Realty",
+    owner: "Nikhil Verma",
+    status: "Published",
+    updated: "5 Aug 2026",
+    format: "4K 16:9 + cutdowns",
+    summary: "Full listing film plus three vertical cutdowns for paid distribution.",
+  },
+  {
+    id: "RES-405",
+    title: "Bluepeak founder carousel set",
+    type: "Carousel",
+    account: "Bluepeak SaaS",
+    owner: "Sana Rao",
+    status: "Draft",
+    updated: "14 Aug 2026",
+    format: "5 × 1080px PNG",
+    summary: "Thought leadership carousels drawn from the last founder interview.",
+  },
+  {
+    id: "RES-406",
+    title: "Saffron menu launch key art",
+    type: "Static",
+    account: "Saffron Kitchens",
+    owner: "Zoya Khan",
+    status: "In review",
+    updated: "12 Aug 2026",
+    format: "Print + digital",
+    summary: "Key art system for the monsoon menu launch across outlets.",
+  },
+];
+
+export const team: Member[] = [
+  {
+    id: "TM-501",
+    name: "Ira Malhotra",
+    role: "Account Director",
+    capacity: 82,
+    accounts: 2,
+    focus: "Strategy, client relationships",
+    status: "Loaded",
+  },
+  {
+    id: "TM-502",
+    name: "Dev Kapoor",
+    role: "Performance Lead",
+    capacity: 68,
+    accounts: 2,
+    focus: "Paid social, creator ops",
+    status: "Available",
+  },
+  {
+    id: "TM-503",
+    name: "Zoya Khan",
+    role: "Senior Editor",
+    capacity: 91,
+    accounts: 3,
+    focus: "Reels, colour, sound",
+    status: "Loaded",
+  },
+  {
+    id: "TM-504",
+    name: "Nikhil Verma",
+    role: "Cinematographer",
+    capacity: 54,
+    accounts: 2,
+    focus: "Property films, shoots",
+    status: "Available",
+  },
+  {
+    id: "TM-505",
+    name: "Sana Rao",
+    role: "Automation Specialist",
+    capacity: 75,
+    accounts: 2,
+    focus: "CRM flows, nurture",
+    status: "Available",
+  },
+  {
+    id: "TM-506",
+    name: "Aarav Joshi",
+    role: "Copywriter",
+    capacity: 40,
+    accounts: 1,
+    focus: "Scripts, newsletters",
+    status: "On leave",
+  },
+];
+
+export const schedule: ScheduleItem[] = [
+  { id: "SCH-1", day: 3, time: "09:30", account: "Northwind Studios", title: "Cast spotlight reel", channel: "Instagram", owner: "Zoya Khan", status: "Scheduled" },
+  { id: "SCH-2", day: 3, time: "17:00", account: "Bluepeak SaaS", title: "Founder POV post", channel: "LinkedIn", owner: "Sana Rao", status: "Needs approval" },
+  { id: "SCH-3", day: 5, time: "11:00", account: "Lumen Fitness", title: "30-day challenge short", channel: "TikTok", owner: "Dev Kapoor", status: "Scheduled" },
+  { id: "SCH-4", day: 7, time: "10:00", account: "Arcadia Realty", title: "Powai tower walkthrough", channel: "YouTube", owner: "Nikhil Verma", status: "Published" },
+  { id: "SCH-5", day: 10, time: "08:30", account: "Saffron Kitchens", title: "Monsoon menu teaser", channel: "Instagram", owner: "Zoya Khan", status: "Scheduled" },
+  { id: "SCH-6", day: 12, time: "16:00", account: "Northwind Studios", title: "Weekly community digest", channel: "Newsletter", owner: "Aarav Joshi", status: "Needs approval" },
+  { id: "SCH-7", day: 14, time: "12:00", account: "Lumen Fitness", title: "Creator duet drop", channel: "Instagram", owner: "Dev Kapoor", status: "Scheduled" },
+  { id: "SCH-8", day: 18, time: "09:00", account: "Arcadia Realty", title: "Listing carousel batch", channel: "Instagram", owner: "Nikhil Verma", status: "Scheduled" },
+  { id: "SCH-9", day: 20, time: "18:30", account: "Bluepeak SaaS", title: "Product newsletter", channel: "Newsletter", owner: "Aarav Joshi", status: "Scheduled" },
+  { id: "SCH-10", day: 24, time: "10:30", account: "Saffron Kitchens", title: "Chef interview film", channel: "YouTube", owner: "Nikhil Verma", status: "Needs approval" },
+  { id: "SCH-11", day: 26, time: "15:00", account: "Northwind Studios", title: "BTS reel batch", channel: "Instagram", owner: "Zoya Khan", status: "Scheduled" },
+  { id: "SCH-12", day: 28, time: "11:30", account: "Lumen Fitness", title: "Transformation story", channel: "TikTok", owner: "Dev Kapoor", status: "Scheduled" },
+];
+
+export const notifications: Notification[] = [
+  {
+    id: "NTF-601",
+    kind: "payment",
+    title: "Invoice overdue — 12 days",
+    detail: "Bluepeak SaaS invoice #INV-2291 for $2,500 is past due. Second reminder sent.",
+    account: "Bluepeak SaaS",
+    when: "2h ago",
+    severity: "high",
+  },
+  {
+    id: "NTF-602",
+    kind: "payment",
+    title: "Payment due in 7 days",
+    detail: "Lumen Fitness retainer of $3,200 is scheduled for 22 Aug.",
+    account: "Lumen Fitness",
+    when: "5h ago",
+    severity: "medium",
+  },
+  {
+    id: "NTF-603",
+    kind: "client",
+    title: "Approval pending",
+    detail: "Founder POV post awaiting sign-off before the 17:00 publish slot.",
+    account: "Bluepeak SaaS",
+    when: "Today",
+    severity: "high",
+  },
+  {
+    id: "NTF-604",
+    kind: "client",
+    title: "New brief received",
+    detail: "Saffron Kitchens uploaded the monsoon menu list and outlet access notes.",
+    account: "Saffron Kitchens",
+    when: "Yesterday",
+    severity: "low",
+  },
+  {
+    id: "NTF-605",
+    kind: "system",
+    title: "Automation ran successfully",
+    detail: "Arcadia nurture sequence fired for 34 new listing leads.",
+    account: "Arcadia Realty",
+    when: "Yesterday",
+    severity: "low",
+  },
+  {
+    id: "NTF-606",
+    kind: "client",
+    title: "Health dropped to At risk",
+    detail: "Lumen Fitness CPL up 28% week over week. Schedule a review call.",
+    account: "Lumen Fitness",
+    when: "2d ago",
+    severity: "medium",
+  },
+];
+
+export const currency = (value: number) =>
+  `$${value.toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
