@@ -27,7 +27,7 @@ export function DetailSheet({
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="flex w-full flex-col gap-0 p-0 sm:max-w-xl">
-        <SheetHeader className="border-b bg-surface/60 px-6 py-5 text-left">
+        <SheetHeader className="border-b bg-surface/60 px-6 py-5 pr-14 text-left">
           <div className="flex items-start justify-between gap-3">
             <div>
               <SheetTitle className="text-xl">{title}</SheetTitle>
