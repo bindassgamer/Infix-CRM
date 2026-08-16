@@ -44,8 +44,8 @@ export function StatusPill({
   className,
 }: {
   value: string;
-  tone?: Tone;
-  className?: string;
+  tone?: Tone | undefined;
+  className?: string | undefined;
 }) {
   const resolved = tone ?? toneMap[value] ?? "neutral";
   return (
