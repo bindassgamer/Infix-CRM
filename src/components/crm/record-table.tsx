@@ -29,8 +29,8 @@ export function RecordTable<T extends { id: string }>({
   rows: T[];
   columns: Column<T>[];
   onRowClick: (row: T) => void;
-  activeId?: string | null;
-  empty?: string;
+  activeId?: string | null | undefined;
+  empty?: string | undefined;
 }) {
   return (
     <div className="panel overflow-hidden">

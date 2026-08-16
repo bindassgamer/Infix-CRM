@@ -20,8 +20,8 @@ export function DetailSheet({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
-  subtitle?: string;
-  badge?: ReactNode;
+  subtitle?: string | undefined;
+  badge?: ReactNode | undefined;
   children: ReactNode;
 }) {
   return (
