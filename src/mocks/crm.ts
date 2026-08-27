@@ -1,93 +1,18 @@
-export type Stage = "New" | "Qualified" | "Proposal" | "Negotiation" | "Won" | "Lost";
-export type Health = "Healthy" | "At risk" | "Churn risk";
+/**
+ * Demo records used as a fallback while the Django backend is not reachable.
+ * Delete this file (and USE_MOCKS in src/api/http.ts) once the API is live.
+ */
+import type {
+  Account,
+  Contact,
+  Lead,
+  Member,
+  Notification,
+  Resource,
+  ScheduleItem,
+} from "@/types/crm";
 
-export type Account = {
-  id: string;
-  name: string;
-  industry: string;
-  owner: string;
-  retainer: number;
-  health: Health;
-  since: string;
-  services: string[];
-  plan: string;
-  process: string[];
-  nextInvoice: string;
-  paymentStatus: "Paid" | "Due" | "Overdue";
-  contactId: string;
-};
-
-export type Contact = {
-  id: string;
-  name: string;
-  role: string;
-  account: string;
-  email: string;
-  phone: string;
-  channel: string;
-  lastTouch: string;
-  notes: string;
-};
-
-export type Lead = {
-  id: string;
-  name: string;
-  company: string;
-  source: string;
-  stage: Stage;
-  value: number;
-  owner: string;
-  created: string;
-  score: number;
-  need: string;
-  nextStep: string;
-  timeline: { date: string; event: string }[];
-};
-
-export type Resource = {
-  id: string;
-  title: string;
-  type: "Reel" | "Carousel" | "Static" | "Video" | "Template" | "Playbook";
-  account: string;
-  owner: string;
-  status: "Draft" | "In review" | "Approved" | "Published";
-  updated: string;
-  format: string;
-  summary: string;
-};
-
-export type Member = {
-  id: string;
-  name: string;
-  role: string;
-  capacity: number;
-  accounts: number;
-  focus: string;
-  status: "Available" | "Loaded" | "On leave";
-};
-
-export type ScheduleItem = {
-  id: string;
-  day: number;
-  time: string;
-  account: string;
-  title: string;
-  channel: "Instagram" | "YouTube" | "LinkedIn" | "TikTok" | "Newsletter";
-  owner: string;
-  status: "Scheduled" | "Needs approval" | "Published";
-};
-
-export type Notification = {
-  id: string;
-  kind: "payment" | "client" | "system";
-  title: string;
-  detail: string;
-  account: string;
-  when: string;
-  severity: "high" | "medium" | "low";
-};
-
-export const accounts: Account[] = [
+export const mockAccounts: Account[] = [
   {
     id: "ACC-101",
     name: "Northwind Studios",
@@ -186,7 +111,7 @@ export const accounts: Account[] = [
   },
 ];
 
-export const contacts: Contact[] = [
+export const mockContacts: Contact[] = [
   {
     id: "CON-201",
     name: "Maya Iyer",
@@ -244,7 +169,7 @@ export const contacts: Contact[] = [
   },
 ];
 
-export const leads: Lead[] = [
+export const mockLeads: Lead[] = [
   {
     id: "LEAD-301",
     name: "Priya Menon",
@@ -351,7 +276,7 @@ export const leads: Lead[] = [
   },
 ];
 
-export const resources: Resource[] = [
+export const mockResources: Resource[] = [
   {
     id: "RES-401",
     title: "Reel hook library — 40 openers",
@@ -420,7 +345,7 @@ export const resources: Resource[] = [
   },
 ];
 
-export const team: Member[] = [
+export const mockTeam: Member[] = [
   {
     id: "TM-501",
     name: "Ira Malhotra",
@@ -477,7 +402,7 @@ export const team: Member[] = [
   },
 ];
 
-export const schedule: ScheduleItem[] = [
+export const mockSchedule: ScheduleItem[] = [
   { id: "SCH-1", day: 3, time: "09:30", account: "Northwind Studios", title: "Cast spotlight reel", channel: "Instagram", owner: "Zoya Khan", status: "Scheduled" },
   { id: "SCH-2", day: 3, time: "17:00", account: "Bluepeak SaaS", title: "Founder POV post", channel: "LinkedIn", owner: "Sana Rao", status: "Needs approval" },
   { id: "SCH-3", day: 5, time: "11:00", account: "Lumen Fitness", title: "30-day challenge short", channel: "TikTok", owner: "Dev Kapoor", status: "Scheduled" },
@@ -492,7 +417,7 @@ export const schedule: ScheduleItem[] = [
   { id: "SCH-12", day: 28, time: "11:30", account: "Lumen Fitness", title: "Transformation story", channel: "TikTok", owner: "Dev Kapoor", status: "Scheduled" },
 ];
 
-export const notifications: Notification[] = [
+export const mockNotifications: Notification[] = [
   {
     id: "NTF-601",
     kind: "payment",
@@ -549,5 +474,3 @@ export const notifications: Notification[] = [
   },
 ];
 
-export const currency = (value: number) =>
-  `$${value.toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
