@@ -7,7 +7,8 @@ import { RecordTable, type Column } from "@/components/crm/record-table";
 import { StatusPill } from "@/components/crm/status-pill";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { resources, type Resource } from "@/data/crm";
+import { useResources } from "@/hooks/use-resources";
+import type { Resource } from "@/types/crm";
 
 export const Route = createFileRoute("/resources")({
   head: () => ({
@@ -54,6 +55,8 @@ const columns: Column<Resource>[] = [
 ];
 
 function ResourcesPage() {
+  const { resources, isLoading } = useResources();
+
   const [active, setActive] = useState<Resource | null>(null);
 
   return (
@@ -65,7 +68,13 @@ function ResourcesPage() {
         actions={<Button>Upload asset</Button>}
       />
 
-      <RecordTable rows={resources} columns={columns} activeId={active?.id} onRowClick={setActive} />
+      <RecordTable
+        rows={resources}
+        columns={columns}
+        activeId={active?.id}
+        onRowClick={setActive}
+        empty={isLoading ? "Loading assets…" : "No assets yet."}
+      />
 
       <DetailSheet
         open={!!active}

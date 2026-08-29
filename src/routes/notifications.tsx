@@ -7,7 +7,10 @@ import { PageHeader } from "@/components/crm/page-header";
 import { StatusPill } from "@/components/crm/status-pill";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { accounts, currency, notifications, type Notification } from "@/data/crm";
+import { formatCurrency } from "@/lib/format";
+import { useAccounts } from "@/hooks/use-accounts";
+import { useNotifications } from "@/hooks/use-notifications";
+import type { Notification } from "@/types/crm";
 
 export const Route = createFileRoute("/notifications")({
   head: () => ({
@@ -42,12 +45,15 @@ const tabs = [
 ] as const;
 
 function NotificationsPage() {
+  const { notifications } = useNotifications();
+  const { accounts } = useAccounts();
+
   const [tab, setTab] = useState<string>("all");
   const [active, setActive] = useState<Notification | null>(null);
 
   const rows = useMemo(
     () => (tab === "all" ? notifications : notifications.filter((n) => n.kind === tab)),
-    [tab],
+    [tab, notifications],
   );
 
   const overdue = accounts.filter((a) => a.paymentStatus === "Overdue");
@@ -67,14 +73,14 @@ function NotificationsPage() {
         <div className="panel border-destructive/30 bg-destructive/5 p-4">
           <p className="text-sm text-muted-foreground">Overdue</p>
           <p className="mt-1 font-display text-xl font-semibold text-destructive">
-            {currency(overdue.reduce((s, a) => s + a.retainer, 0))}
+            {formatCurrency(overdue.reduce((s, a) => s + a.retainer, 0))}
           </p>
           <p className="text-xs text-muted-foreground">{overdue.length} account</p>
         </div>
         <div className="panel p-4">
           <p className="text-sm text-muted-foreground">Due this month</p>
           <p className="mt-1 font-display text-xl font-semibold">
-            {currency(due.reduce((s, a) => s + a.retainer, 0))}
+            {formatCurrency(due.reduce((s, a) => s + a.retainer, 0))}
           </p>
           <p className="text-xs text-muted-foreground">{due.length} accounts</p>
         </div>
@@ -142,7 +148,7 @@ function NotificationsPage() {
               <>
                 <DetailGrid
                   items={[
-                    { label: "Retainer", value: `${currency(account.retainer)} / mo` },
+                    { label: "Retainer", value: `${formatCurrency(account.retainer)} / mo` },
                     { label: "Payment status", value: <StatusPill value={account.paymentStatus} /> },
                     { label: "Next invoice", value: account.nextInvoice },
                     { label: "Owner", value: account.owner },

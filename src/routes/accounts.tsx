@@ -7,7 +7,11 @@ import { RecordTable, type Column } from "@/components/crm/record-table";
 import { StatusPill } from "@/components/crm/status-pill";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { accounts, contacts, currency, schedule, type Account } from "@/data/crm";
+import { formatCurrency } from "@/lib/format";
+import { useAccounts } from "@/hooks/use-accounts";
+import { useContacts } from "@/hooks/use-contacts";
+import { useSchedule } from "@/hooks/use-schedule";
+import type { Account } from "@/types/crm";
 
 export const Route = createFileRoute("/accounts")({
   head: () => ({
@@ -45,7 +49,7 @@ const columns: Column<Account>[] = [
   {
     key: "retainer",
     header: "Retainer / mo",
-    render: (row) => <span className="font-medium">{currency(row.retainer)}</span>,
+    render: (row) => <span className="font-medium">{formatCurrency(row.retainer)}</span>,
   },
   { key: "health", header: "Health", render: (row) => <StatusPill value={row.health} /> },
   {
@@ -63,9 +67,13 @@ const columns: Column<Account>[] = [
 ];
 
 function AccountsPage() {
+  const { accounts, isLoading } = useAccounts();
+  const { contacts } = useContacts();
+  const { scheduleItems } = useSchedule();
+
   const [active, setActive] = useState<Account | null>(null);
   const contact = active ? contacts.find((c) => c.id === active.contactId) : undefined;
-  const upcoming = active ? schedule.filter((s) => s.account === active.name) : [];
+  const upcoming = active ? scheduleItems.filter((item) => item.account === active.name) : [];
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
@@ -81,6 +89,7 @@ function AccountsPage() {
         columns={columns}
         activeId={active?.id}
         onRowClick={setActive}
+        empty={isLoading ? "Loading accounts…" : "No accounts yet."}
       />
 
       <DetailSheet
@@ -94,7 +103,7 @@ function AccountsPage() {
           <>
             <DetailGrid
               items={[
-                { label: "Retainer", value: `${currency(active.retainer)} / mo` },
+                { label: "Retainer", value: `${formatCurrency(active.retainer)} / mo` },
                 { label: "Account owner", value: active.owner },
                 { label: "Payment status", value: <StatusPill value={active.paymentStatus} /> },
                 { label: "Next invoice", value: active.nextInvoice },

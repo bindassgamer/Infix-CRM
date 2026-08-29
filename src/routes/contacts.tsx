@@ -6,7 +6,10 @@ import { DetailGrid, DetailSection, DetailSheet } from "@/components/crm/detail-
 import { PageHeader } from "@/components/crm/page-header";
 import { RecordTable, type Column } from "@/components/crm/record-table";
 import { Button } from "@/components/ui/button";
-import { contacts, accounts, type Contact } from "@/data/crm";
+import { formatInitials } from "@/lib/format";
+import { useAccounts } from "@/hooks/use-accounts";
+import { useContacts } from "@/hooks/use-contacts";
+import type { Contact } from "@/types/crm";
 
 export const Route = createFileRoute("/contacts")({
   head: () => ({
@@ -27,13 +30,6 @@ export const Route = createFileRoute("/contacts")({
   component: ContactsPage,
 });
 
-const initials = (name: string) =>
-  name
-    .split(" ")
-    .map((p) => p[0])
-    .join("")
-    .slice(0, 2);
-
 const columns: Column<Contact>[] = [
   {
     key: "name",
@@ -41,7 +37,7 @@ const columns: Column<Contact>[] = [
     render: (row) => (
       <div className="flex items-center gap-3">
         <span className="grid size-9 place-items-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-          {initials(row.name)}
+          {formatInitials(row.name)}
         </span>
         <div>
           <p className="font-medium">{row.name}</p>
@@ -67,6 +63,9 @@ const columns: Column<Contact>[] = [
 ];
 
 function ContactsPage() {
+  const { contacts, isLoading } = useContacts();
+  const { accounts } = useAccounts();
+
   const [active, setActive] = useState<Contact | null>(null);
   const account = active ? accounts.find((a) => a.name === active.account) : undefined;
 
@@ -79,7 +78,13 @@ function ContactsPage() {
         actions={<Button>Add contact</Button>}
       />
 
-      <RecordTable rows={contacts} columns={columns} activeId={active?.id} onRowClick={setActive} />
+      <RecordTable
+        rows={contacts}
+        columns={columns}
+        activeId={active?.id}
+        onRowClick={setActive}
+        empty={isLoading ? "Loading contacts…" : "No contacts yet."}
+      />
 
       <DetailSheet
         open={!!active}

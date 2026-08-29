@@ -7,7 +7,10 @@ import { RecordTable, type Column } from "@/components/crm/record-table";
 import { StatusPill } from "@/components/crm/status-pill";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { accounts, resources, team, type Member } from "@/data/crm";
+import { useAccounts } from "@/hooks/use-accounts";
+import { useResources } from "@/hooks/use-resources";
+import { useTeam } from "@/hooks/use-team";
+import type { Member } from "@/types/crm";
 
 export const Route = createFileRoute("/team")({
   head: () => ({
@@ -52,6 +55,10 @@ const columns: Column<Member>[] = [
 ];
 
 function TeamPage() {
+  const { teamMembers, isLoading } = useTeam();
+  const { accounts } = useAccounts();
+  const { resources } = useResources();
+
   const [active, setActive] = useState<Member | null>(null);
   const owned = active ? accounts.filter((a) => a.owner === active.name) : [];
   const assets = active ? resources.filter((r) => r.owner === active.name) : [];
@@ -65,7 +72,13 @@ function TeamPage() {
         actions={<Button>Invite member</Button>}
       />
 
-      <RecordTable rows={team} columns={columns} activeId={active?.id} onRowClick={setActive} />
+      <RecordTable
+        rows={teamMembers}
+        columns={columns}
+        activeId={active?.id}
+        onRowClick={setActive}
+        empty={isLoading ? "Loading roster…" : "No team members yet."}
+      />
 
       <DetailSheet
         open={!!active}

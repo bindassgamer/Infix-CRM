@@ -5,7 +5,12 @@ import { PageHeader } from "@/components/crm/page-header";
 import { StatCard } from "@/components/crm/stat-card";
 import { StatusPill } from "@/components/crm/status-pill";
 import { Progress } from "@/components/ui/progress";
-import { accounts, currency, leads, notifications, schedule, team } from "@/data/crm";
+import { formatCurrency } from "@/lib/format";
+import { useAccounts } from "@/hooks/use-accounts";
+import { useLeads } from "@/hooks/use-leads";
+import { useNotifications } from "@/hooks/use-notifications";
+import { useSchedule } from "@/hooks/use-schedule";
+import { useTeam } from "@/hooks/use-team";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -27,11 +32,19 @@ export const Route = createFileRoute("/")({
 });
 
 function Overview() {
+  const { accounts } = useAccounts();
+  const { leads } = useLeads();
+  const { teamMembers: team } = useTeam();
+  const { scheduleItems: schedule } = useSchedule();
+  const { notifications } = useNotifications();
+
   const openPipeline = leads
     .filter((l) => l.stage !== "Won" && l.stage !== "Lost")
     .reduce((sum, l) => sum + l.value, 0);
   const mrr = accounts.reduce((sum, a) => sum + a.retainer, 0);
-  const avgLoad = Math.round(team.reduce((s, m) => s + m.capacity, 0) / team.length);
+  const avgLoad = team.length
+    ? Math.round(team.reduce((s, m) => s + m.capacity, 0) / team.length)
+    : 0;
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
@@ -50,13 +63,13 @@ function Overview() {
         />
         <StatCard
           label="Monthly retainers"
-          value={currency(mrr)}
+          value={formatCurrency(mrr)}
           hint="1 invoice overdue"
           icon={IndianRupee}
         />
         <StatCard
           label="Open pipeline"
-          value={currency(openPipeline)}
+          value={formatCurrency(openPipeline)}
           hint="4 active leads"
           icon={Target}
         />
@@ -80,7 +93,7 @@ function Overview() {
                   <div className="flex items-center justify-between text-sm">
                     <span className="font-medium">{stage}</span>
                     <span className="text-muted-foreground">
-                      {stageLeads.length} · {currency(value)}
+                      {stageLeads.length} · {formatCurrency(value)}
                     </span>
                   </div>
                   <Progress
