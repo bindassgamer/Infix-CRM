@@ -6,7 +6,7 @@
  * resolves with the demo records in src/mocks/crm.ts so the UI keeps working.
  */
 
-export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/+$/, "");
+export const API_BASE_URL = (import.meta.env['VITE_API_BASE_URL'] ?? "").replace(/\/+$/, "");
 
 /** True while no backend is configured. Remove this once Django is wired up. */
 export const USE_MOCKS = API_BASE_URL === "";
