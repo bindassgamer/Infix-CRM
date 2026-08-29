@@ -32,11 +32,19 @@ export const Route = createFileRoute("/")({
 });
 
 function Overview() {
+  const { accounts } = useAccounts();
+  const { leads } = useLeads();
+  const { teamMembers: team } = useTeam();
+  const { scheduleItems: schedule } = useSchedule();
+  const { notifications } = useNotifications();
+
   const openPipeline = leads
     .filter((l) => l.stage !== "Won" && l.stage !== "Lost")
     .reduce((sum, l) => sum + l.value, 0);
   const mrr = accounts.reduce((sum, a) => sum + a.retainer, 0);
-  const avgLoad = Math.round(team.reduce((s, m) => s + m.capacity, 0) / team.length);
+  const avgLoad = team.length
+    ? Math.round(team.reduce((s, m) => s + m.capacity, 0) / team.length)
+    : 0;
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
