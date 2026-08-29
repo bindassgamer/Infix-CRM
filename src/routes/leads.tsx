@@ -73,6 +73,8 @@ const columns: Column<Lead>[] = [
 ];
 
 function LeadsPage() {
+  const { leads, isLoading } = useLeads();
+
   const [filter, setFilter] = useState<string>("All");
   const [active, setActive] = useState<Lead | null>(null);
 
@@ -80,7 +82,7 @@ function LeadsPage() {
     if (filter === "All") return leads;
     if (filter === "Open") return leads.filter((l) => l.stage !== "Won" && l.stage !== "Lost");
     return leads.filter((l) => l.stage === (filter as Stage));
-  }, [filter]);
+  }, [filter, leads]);
 
   const open = leads.filter((l) => l.stage !== "Won" && l.stage !== "Lost");
 
@@ -108,7 +110,7 @@ function LeadsPage() {
         columns={columns}
         activeId={active?.id}
         onRowClick={setActive}
-        empty="No leads in this stage."
+        empty={isLoading ? "Loading leads…" : "No leads in this stage."}
       />
 
       <DetailSheet

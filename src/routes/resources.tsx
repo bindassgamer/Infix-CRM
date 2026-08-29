@@ -55,6 +55,8 @@ const columns: Column<Resource>[] = [
 ];
 
 function ResourcesPage() {
+  const { resources, isLoading } = useResources();
+
   const [active, setActive] = useState<Resource | null>(null);
 
   return (
@@ -66,7 +68,13 @@ function ResourcesPage() {
         actions={<Button>Upload asset</Button>}
       />
 
-      <RecordTable rows={resources} columns={columns} activeId={active?.id} onRowClick={setActive} />
+      <RecordTable
+        rows={resources}
+        columns={columns}
+        activeId={active?.id}
+        onRowClick={setActive}
+        empty={isLoading ? "Loading assets…" : "No assets yet."}
+      />
 
       <DetailSheet
         open={!!active}

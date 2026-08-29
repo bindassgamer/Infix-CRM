@@ -45,6 +45,9 @@ const tabs = [
 ] as const;
 
 function NotificationsPage() {
+  const { notifications } = useNotifications();
+  const { accounts } = useAccounts();
+
   const [tab, setTab] = useState<string>("all");
   const [active, setActive] = useState<Notification | null>(null);
 

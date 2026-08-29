@@ -55,6 +55,10 @@ const columns: Column<Member>[] = [
 ];
 
 function TeamPage() {
+  const { teamMembers, isLoading } = useTeam();
+  const { accounts } = useAccounts();
+  const { resources } = useResources();
+
   const [active, setActive] = useState<Member | null>(null);
   const owned = active ? accounts.filter((a) => a.owner === active.name) : [];
   const assets = active ? resources.filter((r) => r.owner === active.name) : [];
@@ -68,7 +72,13 @@ function TeamPage() {
         actions={<Button>Invite member</Button>}
       />
 
-      <RecordTable rows={team} columns={columns} activeId={active?.id} onRowClick={setActive} />
+      <RecordTable
+        rows={teamMembers}
+        columns={columns}
+        activeId={active?.id}
+        onRowClick={setActive}
+        empty={isLoading ? "Loading roster…" : "No team members yet."}
+      />
 
       <DetailSheet
         open={!!active}

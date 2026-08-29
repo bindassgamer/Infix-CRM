@@ -34,6 +34,8 @@ const daysInMonth = 31;
 const startOffset = 5; // 1 Aug 2026 falls on a Saturday
 
 function PlanningPage() {
+  const { scheduleItems } = useSchedule();
+
   const [active, setActive] = useState<ScheduleItem | null>(null);
   const cells = [...Array(startOffset).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => i + 1)];
 
@@ -70,7 +72,7 @@ function PlanningPage() {
         </div>
         <div className="grid grid-cols-7">
           {cells.map((day, idx) => {
-            const items = day ? schedule.filter((s) => s.day === day) : [];
+            const items = day ? scheduleItems.filter((item) => item.day === day) : [];
             return (
               <div
                 key={idx}
@@ -107,7 +109,7 @@ function PlanningPage() {
       <div className="panel p-5">
         <h2 className="text-base font-semibold">Upload queue</h2>
         <ul className="mt-3 divide-y">
-          {schedule.map((item) => (
+          {scheduleItems.map((item) => (
             <li key={item.id}>
               <button
                 onClick={() => setActive(item)}

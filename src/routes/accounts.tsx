@@ -67,9 +67,13 @@ const columns: Column<Account>[] = [
 ];
 
 function AccountsPage() {
+  const { accounts, isLoading } = useAccounts();
+  const { contacts } = useContacts();
+  const { scheduleItems } = useSchedule();
+
   const [active, setActive] = useState<Account | null>(null);
   const contact = active ? contacts.find((c) => c.id === active.contactId) : undefined;
-  const upcoming = active ? schedule.filter((s) => s.account === active.name) : [];
+  const upcoming = active ? scheduleItems.filter((item) => item.account === active.name) : [];
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
@@ -85,6 +89,7 @@ function AccountsPage() {
         columns={columns}
         activeId={active?.id}
         onRowClick={setActive}
+        empty={isLoading ? "Loading accounts…" : "No accounts yet."}
       />
 
       <DetailSheet
