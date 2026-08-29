@@ -53,7 +53,7 @@ function NotificationsPage() {
 
   const rows = useMemo(
     () => (tab === "all" ? notifications : notifications.filter((n) => n.kind === tab)),
-    [tab],
+    [tab, notifications],
   );
 
   const overdue = accounts.filter((a) => a.paymentStatus === "Overdue");
