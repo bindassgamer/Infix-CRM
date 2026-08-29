@@ -5,7 +5,12 @@ import { PageHeader } from "@/components/crm/page-header";
 import { StatCard } from "@/components/crm/stat-card";
 import { StatusPill } from "@/components/crm/status-pill";
 import { Progress } from "@/components/ui/progress";
-import { accounts, currency, leads, notifications, schedule, team } from "@/data/crm";
+import { formatCurrency } from "@/lib/format";
+import { useAccounts } from "@/hooks/use-accounts";
+import { useLeads } from "@/hooks/use-leads";
+import { useNotifications } from "@/hooks/use-notifications";
+import { useSchedule } from "@/hooks/use-schedule";
+import { useTeam } from "@/hooks/use-team";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -50,13 +55,13 @@ function Overview() {
         />
         <StatCard
           label="Monthly retainers"
-          value={currency(mrr)}
+          value={formatCurrency(mrr)}
           hint="1 invoice overdue"
           icon={IndianRupee}
         />
         <StatCard
           label="Open pipeline"
-          value={currency(openPipeline)}
+          value={formatCurrency(openPipeline)}
           hint="4 active leads"
           icon={Target}
         />
@@ -80,7 +85,7 @@ function Overview() {
                   <div className="flex items-center justify-between text-sm">
                     <span className="font-medium">{stage}</span>
                     <span className="text-muted-foreground">
-                      {stageLeads.length} · {currency(value)}
+                      {stageLeads.length} · {formatCurrency(value)}
                     </span>
                   </div>
                   <Progress

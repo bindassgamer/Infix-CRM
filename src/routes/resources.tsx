@@ -7,7 +7,8 @@ import { RecordTable, type Column } from "@/components/crm/record-table";
 import { StatusPill } from "@/components/crm/status-pill";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { resources, type Resource } from "@/data/crm";
+import { useResources } from "@/hooks/use-resources";
+import type { Resource } from "@/types/crm";
 
 export const Route = createFileRoute("/resources")({
   head: () => ({

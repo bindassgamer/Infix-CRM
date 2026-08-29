@@ -7,7 +7,11 @@ import { RecordTable, type Column } from "@/components/crm/record-table";
 import { StatusPill } from "@/components/crm/status-pill";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { accounts, contacts, currency, schedule, type Account } from "@/data/crm";
+import { formatCurrency } from "@/lib/format";
+import { useAccounts } from "@/hooks/use-accounts";
+import { useContacts } from "@/hooks/use-contacts";
+import { useSchedule } from "@/hooks/use-schedule";
+import type { Account } from "@/types/crm";
 
 export const Route = createFileRoute("/accounts")({
   head: () => ({
@@ -45,7 +49,7 @@ const columns: Column<Account>[] = [
   {
     key: "retainer",
     header: "Retainer / mo",
-    render: (row) => <span className="font-medium">{currency(row.retainer)}</span>,
+    render: (row) => <span className="font-medium">{formatCurrency(row.retainer)}</span>,
   },
   { key: "health", header: "Health", render: (row) => <StatusPill value={row.health} /> },
   {
@@ -94,7 +98,7 @@ function AccountsPage() {
           <>
             <DetailGrid
               items={[
-                { label: "Retainer", value: `${currency(active.retainer)} / mo` },
+                { label: "Retainer", value: `${formatCurrency(active.retainer)} / mo` },
                 { label: "Account owner", value: active.owner },
                 { label: "Payment status", value: <StatusPill value={active.paymentStatus} /> },
                 { label: "Next invoice", value: active.nextInvoice },

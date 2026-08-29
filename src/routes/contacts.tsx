@@ -6,7 +6,10 @@ import { DetailGrid, DetailSection, DetailSheet } from "@/components/crm/detail-
 import { PageHeader } from "@/components/crm/page-header";
 import { RecordTable, type Column } from "@/components/crm/record-table";
 import { Button } from "@/components/ui/button";
-import { contacts, accounts, type Contact } from "@/data/crm";
+import { formatInitials } from "@/lib/format";
+import { useAccounts } from "@/hooks/use-accounts";
+import { useContacts } from "@/hooks/use-contacts";
+import type { Contact } from "@/types/crm";
 
 export const Route = createFileRoute("/contacts")({
   head: () => ({

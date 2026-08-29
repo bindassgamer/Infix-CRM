@@ -8,7 +8,9 @@ import { StatusPill } from "@/components/crm/status-pill";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { currency, leads, type Lead, type Stage } from "@/data/crm";
+import { formatCurrency } from "@/lib/format";
+import { useLeads } from "@/hooks/use-leads";
+import type { Lead, Stage } from "@/types/crm";
 
 export const Route = createFileRoute("/leads")({
   head: () => ({
@@ -48,7 +50,7 @@ const columns: Column<Lead>[] = [
   {
     key: "value",
     header: "Value",
-    render: (row) => <span className="font-medium">{currency(row.value)}</span>,
+    render: (row) => <span className="font-medium">{formatCurrency(row.value)}</span>,
   },
   {
     key: "score",
@@ -87,7 +89,7 @@ function LeadsPage() {
       <PageHeader
         eyebrow="Pipeline"
         title="Leads"
-        description={`${open.length} open leads worth ${currency(open.reduce((s, l) => s + l.value, 0))}. Click a row for the full story.`}
+        description={`${open.length} open leads worth ${formatCurrency(open.reduce((s, l) => s + l.value, 0))}. Click a row for the full story.`}
         actions={<Button>New lead</Button>}
       />
 
@@ -120,7 +122,7 @@ function LeadsPage() {
           <>
             <DetailGrid
               items={[
-                { label: "Deal value", value: currency(active.value) },
+                { label: "Deal value", value: formatCurrency(active.value) },
                 { label: "Owner", value: active.owner },
                 { label: "Source", value: active.source },
                 { label: "Created", value: active.created },

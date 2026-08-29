@@ -7,7 +7,8 @@ import { PageHeader } from "@/components/crm/page-header";
 import { StatusPill } from "@/components/crm/status-pill";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { schedule, type ScheduleItem } from "@/data/crm";
+import { useSchedule } from "@/hooks/use-schedule";
+import type { ScheduleItem } from "@/types/crm";
 
 export const Route = createFileRoute("/planning")({
   head: () => ({
