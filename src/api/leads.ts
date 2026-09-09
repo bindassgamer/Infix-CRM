@@ -4,9 +4,10 @@
  * (including the nested `timeline` array).
  */
 import { endpoints } from "@/api/endpoints";
-import { fetchList, fetchOne } from "@/api/http";
+import { createRecord, fetchList, fetchOne } from "@/api/http";
 import { mockLeads } from "@/mocks/crm";
-import type { Lead } from "@/types/crm";
+import { createLocalId } from "@/lib/id";
+import type { Lead, NewLead } from "@/types/crm";
 
 export function listLeads() {
   return fetchList<Lead>(endpoints.leads.list, mockLeads);
@@ -17,4 +18,12 @@ export function getLead(leadId: string) {
     endpoints.leads.detail(leadId),
     mockLeads.find((lead) => lead.id === leadId),
   );
+}
+
+/** Creates a lead — expects POST /leads/ to return the saved record. */
+export function createLead(input: NewLead) {
+  return createRecord<Lead>(endpoints.leads.list, input, {
+    id: createLocalId("LEAD"),
+    ...input,
+  });
 }

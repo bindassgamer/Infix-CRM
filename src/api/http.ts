@@ -70,3 +70,23 @@ export async function fetchOne<TItem>(path: string, fallback: TItem | undefined)
     return fallback ?? null;
   }
 }
+
+/**
+ * Creates a record on the backend (POST).
+ * Without a backend configured — or when the request fails — the locally built
+ * `fallback` record is returned so the UI can keep working on demo data.
+ */
+export async function createRecord<TItem>(
+  path: string,
+  payload: unknown,
+  fallback: TItem,
+): Promise<TItem> {
+  if (USE_MOCKS) return fallback;
+
+  try {
+    return await requestJson<TItem>(path, { method: "POST", body: JSON.stringify(payload) });
+  } catch (error) {
+    console.warn(`[api] create failed for ${path}, keeping the record locally`, error);
+    return fallback;
+  }
+}
