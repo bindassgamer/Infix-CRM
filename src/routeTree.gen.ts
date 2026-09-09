@@ -17,6 +17,7 @@ import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as PlanningRouteImport } from './routes/planning'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as TeamRouteImport } from './routes/team'
+import { Route as AccountsNewRouteImport } from './routes/accounts_.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +59,11 @@ const TeamRoute = TeamRouteImport.update({
   path: '/team',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountsNewRoute = AccountsNewRouteImport.update({
+  id: '/accounts_/new',
+  path: '/accounts/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/planning': typeof PlanningRoute
   '/resources': typeof ResourcesRoute
   '/team': typeof TeamRoute
+  '/accounts/new': typeof AccountsNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/planning': typeof PlanningRoute
   '/resources': typeof ResourcesRoute
   '/team': typeof TeamRoute
+  '/accounts/new': typeof AccountsNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/planning': typeof PlanningRoute
   '/resources': typeof ResourcesRoute
   '/team': typeof TeamRoute
+  '/accounts_/new': typeof AccountsNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/planning'
     | '/resources'
     | '/team'
+    | '/accounts/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/planning'
     | '/resources'
     | '/team'
+    | '/accounts/new'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/planning'
     | '/resources'
     | '/team'
+    | '/accounts_/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,6 +144,7 @@ export interface RootRouteChildren {
   PlanningRoute: typeof PlanningRoute
   ResourcesRoute: typeof ResourcesRoute
   TeamRoute: typeof TeamRoute
+  AccountsNewRoute: typeof AccountsNewRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeamRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/accounts_/new': {
+      id: '/accounts_/new'
+      path: '/accounts/new'
+      fullPath: '/accounts/new'
+      preLoaderRoute: typeof AccountsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlanningRoute: PlanningRoute,
   ResourcesRoute: ResourcesRoute,
   TeamRoute: TeamRoute,
+  AccountsNewRoute: AccountsNewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
