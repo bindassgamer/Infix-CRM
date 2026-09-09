@@ -87,3 +87,14 @@ export type Notification = {
   severity: "high" | "medium" | "low";
 };
 
+
+/**
+ * Draft shapes sent to the backend when creating a record.
+ * The backend (or the local fallback) assigns the `id`.
+ */
+export type NewAccount = Omit<Account, "id">;
+export type NewContact = Omit<Contact, "id">;
+export type NewLead = Omit<Lead, "id">;
+export type NewResource = Omit<Resource, "id">;
+export type NewMember = Omit<Member, "id">;
+export type NewScheduleItem = Omit<ScheduleItem, "id">;
