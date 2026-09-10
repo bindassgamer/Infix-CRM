@@ -1,7 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 
 import { DetailGrid, DetailSection, DetailSheet } from "@/components/crm/detail-sheet";
+import { CreateFab } from "@/components/crm/create-fab";
 import { PageHeader } from "@/components/crm/page-header";
 import { RecordTable, type Column } from "@/components/crm/record-table";
 import { StatusPill } from "@/components/crm/status-pill";
@@ -92,7 +93,9 @@ function LeadsPage() {
         eyebrow="Pipeline"
         title="Leads"
         description={`${open.length} open leads worth ${formatCurrency(open.reduce((s, l) => s + l.value, 0))}. Click a row for the full story.`}
-        actions={<Button>New lead</Button>}
+        actions={<Button asChild>
+            <Link to="/leads/new">New lead</Link>
+          </Button>}
       />
 
       <Tabs value={filter} onValueChange={setFilter}>
@@ -169,6 +172,7 @@ function LeadsPage() {
           </>
         ) : null}
       </DetailSheet>
+      <CreateFab to="/leads/new" label="New lead" />
     </div>
   );
 }

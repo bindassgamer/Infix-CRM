@@ -1,7 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { DetailGrid, DetailSection, DetailSheet } from "@/components/crm/detail-sheet";
+import { CreateFab } from "@/components/crm/create-fab";
 import { PageHeader } from "@/components/crm/page-header";
 import { RecordTable, type Column } from "@/components/crm/record-table";
 import { StatusPill } from "@/components/crm/status-pill";
@@ -69,7 +70,9 @@ function TeamPage() {
         eyebrow="Studio"
         title="Team"
         description="Who is loaded, who is free, and what each person is carrying this month."
-        actions={<Button>Invite member</Button>}
+        actions={<Button asChild>
+            <Link to="/team/new">Invite member</Link>
+          </Button>}
       />
 
       <RecordTable
@@ -144,6 +147,7 @@ function TeamPage() {
           </>
         ) : null}
       </DetailSheet>
+      <CreateFab to="/team/new" label="Invite member" />
     </div>
   );
 }

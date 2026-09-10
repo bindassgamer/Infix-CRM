@@ -1,8 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Mail, MessageSquare, Phone } from "lucide-react";
 
 import { DetailGrid, DetailSection, DetailSheet } from "@/components/crm/detail-sheet";
+import { CreateFab } from "@/components/crm/create-fab";
 import { PageHeader } from "@/components/crm/page-header";
 import { RecordTable, type Column } from "@/components/crm/record-table";
 import { Button } from "@/components/ui/button";
@@ -75,7 +76,9 @@ function ContactsPage() {
         eyebrow="People"
         title="Contacts"
         description="Open a contact to see how they like to be reached and what they own on their side."
-        actions={<Button>Add contact</Button>}
+        actions={<Button asChild>
+            <Link to="/contacts/new">Add contact</Link>
+          </Button>}
       />
 
       <RecordTable
@@ -130,6 +133,7 @@ function ContactsPage() {
           </>
         ) : null}
       </DetailSheet>
+      <CreateFab to="/contacts/new" label="Add contact" />
     </div>
   );
 }
