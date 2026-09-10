@@ -21,6 +21,7 @@ import { Route as AccountsNewRouteImport } from './routes/accounts_.new'
 import { Route as ContactsNewRouteImport } from './routes/contacts_.new'
 import { Route as LeadsNewRouteImport } from './routes/leads_.new'
 import { Route as ResourcesNewRouteImport } from './routes/resources_.new'
+import { Route as TeamNewRouteImport } from './routes/team_.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -82,6 +83,11 @@ const ResourcesNewRoute = ResourcesNewRouteImport.update({
   path: '/resources/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TeamNewRoute = TeamNewRouteImport.update({
+  id: '/team_/new',
+  path: '/team/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/contacts/new': typeof ContactsNewRoute
   '/leads/new': typeof LeadsNewRoute
   '/resources/new': typeof ResourcesNewRoute
+  '/team/new': typeof TeamNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/contacts/new': typeof ContactsNewRoute
   '/leads/new': typeof LeadsNewRoute
   '/resources/new': typeof ResourcesNewRoute
+  '/team/new': typeof TeamNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,6 +133,7 @@ export interface FileRoutesById {
   '/contacts_/new': typeof ContactsNewRoute
   '/leads_/new': typeof LeadsNewRoute
   '/resources_/new': typeof ResourcesNewRoute
+  '/team_/new': typeof TeamNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/contacts/new'
     | '/leads/new'
     | '/resources/new'
+    | '/team/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
     | '/contacts/new'
     | '/leads/new'
     | '/resources/new'
+    | '/team/new'
   id:
     | '__root__'
     | '/'
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
     | '/contacts_/new'
     | '/leads_/new'
     | '/resources_/new'
+    | '/team_/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -184,6 +196,7 @@ export interface RootRouteChildren {
   ContactsNewRoute: typeof ContactsNewRoute
   LeadsNewRoute: typeof LeadsNewRoute
   ResourcesNewRoute: typeof ResourcesNewRoute
+  TeamNewRoute: typeof TeamNewRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -272,6 +285,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResourcesNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/team_/new': {
+      id: '/team_/new'
+      path: '/team/new'
+      fullPath: '/team/new'
+      preLoaderRoute: typeof TeamNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -288,6 +308,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactsNewRoute: ContactsNewRoute,
   LeadsNewRoute: LeadsNewRoute,
   ResourcesNewRoute: ResourcesNewRoute,
+  TeamNewRoute: TeamNewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
