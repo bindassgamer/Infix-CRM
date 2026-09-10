@@ -25,7 +25,7 @@ export function RecordFormPage({
   eyebrow: string;
   title: string;
   description: string;
-  backTo: LinkProps["to"];
+  backTo: NonNullable<LinkProps["to"]>;
   backLabel: string;
   submitLabel: string;
   isSaving: boolean;
