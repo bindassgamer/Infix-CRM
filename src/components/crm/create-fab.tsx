@@ -2,7 +2,7 @@
 import { Link, type LinkProps } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 
-export function CreateFab({ to, label }: { to: LinkProps["to"]; label: string }) {
+export function CreateFab({ to, label }: { to: NonNullable<LinkProps["to"]>; label: string }) {
   return (
     <Link
       to={to}

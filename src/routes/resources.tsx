@@ -1,7 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { DetailGrid, DetailSection, DetailSheet } from "@/components/crm/detail-sheet";
+import { CreateFab } from "@/components/crm/create-fab";
 import { PageHeader } from "@/components/crm/page-header";
 import { RecordTable, type Column } from "@/components/crm/record-table";
 import { StatusPill } from "@/components/crm/status-pill";
@@ -65,7 +66,9 @@ function ResourcesPage() {
         eyebrow="Creative library"
         title="Resources"
         description="Every deliverable and reusable playbook. Open a row for format details and where it sits in review."
-        actions={<Button>Upload asset</Button>}
+        actions={<Button asChild>
+            <Link to="/resources/new">Upload asset</Link>
+          </Button>}
       />
 
       <RecordTable
@@ -122,6 +125,7 @@ function ResourcesPage() {
           </>
         ) : null}
       </DetailSheet>
+      <CreateFab to="/resources/new" label="Upload asset" />
     </div>
   );
 }

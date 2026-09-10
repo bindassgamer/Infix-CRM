@@ -1,7 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { DetailGrid, DetailSection, DetailSheet } from "@/components/crm/detail-sheet";
+import { CreateFab } from "@/components/crm/create-fab";
 import { PageHeader } from "@/components/crm/page-header";
 import { RecordTable, type Column } from "@/components/crm/record-table";
 import { StatusPill } from "@/components/crm/status-pill";
@@ -81,7 +82,9 @@ function AccountsPage() {
         eyebrow="Clients"
         title="Accounts"
         description="Click any row to open the retainer plan, delivery process and billing state."
-        actions={<Button>New account</Button>}
+        actions={<Button asChild>
+            <Link to="/accounts/new">New account</Link>
+          </Button>}
       />
 
       <RecordTable
@@ -175,6 +178,7 @@ function AccountsPage() {
           </>
         ) : null}
       </DetailSheet>
+      <CreateFab to="/accounts/new" label="New account" />
     </div>
   );
 }

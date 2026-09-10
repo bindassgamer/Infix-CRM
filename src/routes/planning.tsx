@@ -1,8 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { DetailGrid, DetailSection, DetailSheet } from "@/components/crm/detail-sheet";
+import { CreateFab } from "@/components/crm/create-fab";
 import { PageHeader } from "@/components/crm/page-header";
 import { StatusPill } from "@/components/crm/status-pill";
 import { Button } from "@/components/ui/button";
@@ -54,7 +55,9 @@ function PlanningPage() {
             <Button variant="outline" size="icon" aria-label="Next month">
               <ChevronRight className="size-4" />
             </Button>
-            <Button>Schedule upload</Button>
+            <Button asChild>
+              <Link to="/planning/new">Schedule upload</Link>
+            </Button>
           </div>
         }
       />
@@ -186,6 +189,7 @@ function PlanningPage() {
           </>
         ) : null}
       </DetailSheet>
+      <CreateFab to="/planning/new" label="Schedule upload" />
     </div>
   );
 }
