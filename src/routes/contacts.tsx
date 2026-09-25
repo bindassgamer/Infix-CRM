@@ -1,6 +1,20 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Mail, MessageSquare, Phone } from "lucide-react";
+
+import {
+  ALL_OPTION,
+  FilterChoice,
+  FilterDrawer,
+} from "@/components/crm/filter-drawer";
+import { SearchField } from "@/components/crm/search-field";
+import { FilterSummary } from "@/components/crm/filter-summary";
+import {
+  countActiveFilters,
+  matchesChoice,
+  matchesSearch,
+  uniqueValues,
+} from "@/lib/filters";
 
 import { DetailGrid, DetailSection, DetailSheet } from "@/components/crm/detail-sheet";
 import { CreateFab } from "@/components/crm/create-fab";
@@ -70,23 +84,71 @@ function ContactsPage() {
   const [active, setActive] = useState<Contact | null>(null);
   const account = active ? accounts.find((a) => a.name === active.account) : undefined;
 
+  // ---- Filters (shown in the right-hand drawer) ----
+  const [search, setSearch] = useState("");
+  const [accountName, setAccountName] = useState(ALL_OPTION);
+  const [channel, setChannel] = useState(ALL_OPTION);
+
+  const accountNames = useMemo(() => uniqueValues(contacts, (c) => c.account), [contacts]);
+  const channels = useMemo(() => uniqueValues(contacts, (c) => c.channel), [contacts]);
+
+  const visibleContacts = useMemo(
+    () =>
+      contacts.filter(
+        (contact) =>
+          matchesSearch(search, [contact.name, contact.role, contact.email, contact.account]) &&
+          matchesChoice(accountName, contact.account) &&
+          matchesChoice(channel, contact.channel),
+      ),
+    [contacts, search, accountName, channel],
+  );
+
+  const activeFilters = countActiveFilters([accountName, channel]);
+
+  const resetFilters = () => {
+    setSearch("");
+    setAccountName(ALL_OPTION);
+    setChannel(ALL_OPTION);
+  };
+
   return (
     <div className="mx-auto max-w-7xl space-y-6">
       <PageHeader
         eyebrow="People"
         title="Contacts"
         description="Open a contact to see how they like to be reached and what they own on their side."
-        actions={<Button asChild>
-            <Link to="/contacts/new">Add contact</Link>
-          </Button>}
+        actions={
+          <>
+            <SearchField value={search} onChange={setSearch} placeholder="Name, role or email" />
+            <FilterDrawer activeCount={activeFilters} onReset={resetFilters}>
+              <FilterChoice
+                label="Account"
+                options={accountNames}
+                value={accountName}
+                onChange={setAccountName}
+              />
+              <FilterChoice
+                label="Preferred channel"
+                options={channels}
+                value={channel}
+                onChange={setChannel}
+              />
+            </FilterDrawer>
+            <Button asChild>
+              <Link to="/contacts/new">Add contact</Link>
+            </Button>
+          </>
+        }
       />
 
+      <FilterSummary shown={visibleContacts.length} total={contacts.length} noun="contacts" />
+
       <RecordTable
-        rows={contacts}
+        rows={visibleContacts}
         columns={columns}
         activeId={active?.id}
         onRowClick={setActive}
-        empty={isLoading ? "Loading contacts…" : "No contacts yet."}
+        empty={isLoading ? "Loading contacts…" : "No contacts match these filters."}
       />
 
       <DetailSheet
