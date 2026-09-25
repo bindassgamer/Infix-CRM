@@ -1,5 +1,19 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+
+import {
+  ALL_OPTION,
+  FilterChoice,
+  FilterDrawer,
+} from "@/components/crm/filter-drawer";
+import { SearchField } from "@/components/crm/search-field";
+import { FilterSummary } from "@/components/crm/filter-summary";
+import {
+  countActiveFilters,
+  matchesChoice,
+  matchesSearch,
+  uniqueValues,
+} from "@/lib/filters";
 
 import { DetailGrid, DetailSection, DetailSheet } from "@/components/crm/detail-sheet";
 import { CreateFab } from "@/components/crm/create-fab";
@@ -60,23 +74,85 @@ function ResourcesPage() {
 
   const [active, setActive] = useState<Resource | null>(null);
 
+  // ---- Filters (shown in the right-hand drawer) ----
+  const [search, setSearch] = useState("");
+  const [type, setType] = useState(ALL_OPTION);
+  const [status, setStatus] = useState(ALL_OPTION);
+  const [accountName, setAccountName] = useState(ALL_OPTION);
+
+  const accountNames = useMemo(() => uniqueValues(resources, (r) => r.account), [resources]);
+
+  const visibleResources = useMemo(
+    () =>
+      resources.filter(
+        (resource) =>
+          matchesSearch(search, [
+            resource.title,
+            resource.id,
+            resource.format,
+            resource.owner,
+            resource.account,
+          ]) &&
+          matchesChoice(type, resource.type) &&
+          matchesChoice(status, resource.status) &&
+          matchesChoice(accountName, resource.account),
+      ),
+    [resources, search, type, status, accountName],
+  );
+
+  const activeFilters = countActiveFilters([type, status, accountName]);
+
+  const resetFilters = () => {
+    setSearch("");
+    setType(ALL_OPTION);
+    setStatus(ALL_OPTION);
+    setAccountName(ALL_OPTION);
+  };
+
   return (
     <div className="mx-auto max-w-7xl space-y-6">
       <PageHeader
         eyebrow="Creative library"
         title="Resources"
         description="Every deliverable and reusable playbook. Open a row for format details and where it sits in review."
-        actions={<Button asChild>
-            <Link to="/resources/new">Upload asset</Link>
-          </Button>}
+        actions={
+          <>
+            <SearchField value={search} onChange={setSearch} placeholder="Title, format or owner" />
+            <FilterDrawer activeCount={activeFilters} onReset={resetFilters}>
+              <FilterChoice
+                label="Type"
+                options={["Reel", "Carousel", "Static", "Video", "Template", "Playbook"]}
+                value={type}
+                onChange={setType}
+              />
+              <FilterChoice
+                label="Status"
+                options={["Draft", "In review", "Approved", "Published"]}
+                value={status}
+                onChange={setStatus}
+              />
+              <FilterChoice
+                label="Account"
+                options={accountNames}
+                value={accountName}
+                onChange={setAccountName}
+              />
+            </FilterDrawer>
+            <Button asChild>
+              <Link to="/resources/new">Upload asset</Link>
+            </Button>
+          </>
+        }
       />
 
+      <FilterSummary shown={visibleResources.length} total={resources.length} noun="assets" />
+
       <RecordTable
-        rows={resources}
+        rows={visibleResources}
         columns={columns}
         activeId={active?.id}
         onRowClick={setActive}
-        empty={isLoading ? "Loading assets…" : "No assets yet."}
+        empty={isLoading ? "Loading assets…" : "No assets match these filters."}
       />
 
       <DetailSheet

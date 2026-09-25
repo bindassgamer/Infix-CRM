@@ -1,5 +1,19 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+
+import {
+  ALL_OPTION,
+  FilterChoice,
+  FilterDrawer,
+} from "@/components/crm/filter-drawer";
+import { SearchField } from "@/components/crm/search-field";
+import { FilterSummary } from "@/components/crm/filter-summary";
+import {
+  countActiveFilters,
+  matchesChoice,
+  matchesSearch,
+  uniqueValues,
+} from "@/lib/filters";
 
 import { DetailGrid, DetailSection, DetailSheet } from "@/components/crm/detail-sheet";
 import { CreateFab } from "@/components/crm/create-fab";
@@ -76,23 +90,74 @@ function AccountsPage() {
   const contact = active ? contacts.find((c) => c.id === active.contactId) : undefined;
   const upcoming = active ? scheduleItems.filter((item) => item.account === active.name) : [];
 
+  // ---- Filters (shown in the right-hand drawer) ----
+  const [search, setSearch] = useState("");
+  const [owner, setOwner] = useState(ALL_OPTION);
+  const [health, setHealth] = useState(ALL_OPTION);
+  const [payment, setPayment] = useState(ALL_OPTION);
+
+  const owners = useMemo(() => uniqueValues(accounts, (a) => a.owner), [accounts]);
+
+  const visibleAccounts = useMemo(
+    () =>
+      accounts.filter(
+        (account) =>
+          matchesSearch(search, [account.name, account.id, account.industry, account.owner]) &&
+          matchesChoice(owner, account.owner) &&
+          matchesChoice(health, account.health) &&
+          matchesChoice(payment, account.paymentStatus),
+      ),
+    [accounts, search, owner, health, payment],
+  );
+
+  const activeFilters = countActiveFilters([owner, health, payment]);
+
+  const resetFilters = () => {
+    setSearch("");
+    setOwner(ALL_OPTION);
+    setHealth(ALL_OPTION);
+    setPayment(ALL_OPTION);
+  };
+
   return (
     <div className="mx-auto max-w-7xl space-y-6">
       <PageHeader
         eyebrow="Clients"
         title="Accounts"
         description="Click any row to open the retainer plan, delivery process and billing state."
-        actions={<Button asChild>
-            <Link to="/accounts/new">New account</Link>
-          </Button>}
+        actions={
+          <>
+            <SearchField value={search} onChange={setSearch} placeholder="Account, industry or owner" />
+            <FilterDrawer activeCount={activeFilters} onReset={resetFilters}>
+              <FilterChoice label="Owner" options={owners} value={owner} onChange={setOwner} />
+              <FilterChoice
+                label="Health"
+                options={["Healthy", "At risk", "Churn risk"]}
+                value={health}
+                onChange={setHealth}
+              />
+              <FilterChoice
+                label="Payment"
+                options={["Paid", "Due", "Overdue"]}
+                value={payment}
+                onChange={setPayment}
+              />
+            </FilterDrawer>
+            <Button asChild>
+              <Link to="/accounts/new">New account</Link>
+            </Button>
+          </>
+        }
       />
 
+      <FilterSummary shown={visibleAccounts.length} total={accounts.length} noun="accounts" />
+
       <RecordTable
-        rows={accounts}
+        rows={visibleAccounts}
         columns={columns}
         activeId={active?.id}
         onRowClick={setActive}
-        empty={isLoading ? "Loading accounts…" : "No accounts yet."}
+        empty={isLoading ? "Loading accounts…" : "No accounts match these filters."}
       />
 
       <DetailSheet

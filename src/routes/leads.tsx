@@ -1,6 +1,15 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 
+import {
+  ALL_OPTION,
+  FilterChoice,
+  FilterDrawer,
+} from "@/components/crm/filter-drawer";
+import { SearchField } from "@/components/crm/search-field";
+import { FilterSummary } from "@/components/crm/filter-summary";
+import { countActiveFilters, matchesChoice, matchesSearch, uniqueValues } from "@/lib/filters";
+
 import { DetailGrid, DetailSection, DetailSheet } from "@/components/crm/detail-sheet";
 import { CreateFab } from "@/components/crm/create-fab";
 import { PageHeader } from "@/components/crm/page-header";
@@ -8,7 +17,6 @@ import { RecordTable, type Column } from "@/components/crm/record-table";
 import { StatusPill } from "@/components/crm/status-pill";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatCurrency } from "@/lib/format";
 import { useLeads } from "@/hooks/use-leads";
 import type { Lead, Stage } from "@/types/crm";
@@ -32,7 +40,14 @@ export const Route = createFileRoute("/leads")({
   component: LeadsPage,
 });
 
-const filters = ["All", "Open", "New", "Qualified", "Proposal", "Negotiation", "Won", "Lost"] as const;
+/** Stage choices in the drawer. "Open" means everything not won or lost. */
+const stages = ["Open", "New", "Qualified", "Proposal", "Negotiation", "Won", "Lost"] as const;
+
+function matchesStage(choice: string, stage: Stage): boolean {
+  if (choice === ALL_OPTION) return true;
+  if (choice === "Open") return stage !== "Won" && stage !== "Lost";
+  return choice === stage;
+}
 
 const columns: Column<Lead>[] = [
   {
@@ -76,14 +91,37 @@ const columns: Column<Lead>[] = [
 function LeadsPage() {
   const { leads, isLoading } = useLeads();
 
-  const [filter, setFilter] = useState<string>("All");
   const [active, setActive] = useState<Lead | null>(null);
 
-  const rows = useMemo(() => {
-    if (filter === "All") return leads;
-    if (filter === "Open") return leads.filter((l) => l.stage !== "Won" && l.stage !== "Lost");
-    return leads.filter((l) => l.stage === (filter as Stage));
-  }, [filter, leads]);
+  // ---- Filters (shown in the right-hand drawer) ----
+  const [search, setSearch] = useState("");
+  const [stage, setStage] = useState(ALL_OPTION);
+  const [owner, setOwner] = useState(ALL_OPTION);
+  const [source, setSource] = useState(ALL_OPTION);
+
+  const owners = useMemo(() => uniqueValues(leads, (l) => l.owner), [leads]);
+  const sources = useMemo(() => uniqueValues(leads, (l) => l.source), [leads]);
+
+  const rows = useMemo(
+    () =>
+      leads.filter(
+        (lead) =>
+          matchesSearch(search, [lead.company, lead.name, lead.id, lead.source, lead.owner]) &&
+          matchesStage(stage, lead.stage) &&
+          matchesChoice(owner, lead.owner) &&
+          matchesChoice(source, lead.source),
+      ),
+    [leads, search, stage, owner, source],
+  );
+
+  const activeFilters = countActiveFilters([stage, owner, source]);
+
+  const resetFilters = () => {
+    setSearch("");
+    setStage(ALL_OPTION);
+    setOwner(ALL_OPTION);
+    setSource(ALL_OPTION);
+  };
 
   const open = leads.filter((l) => l.stage !== "Won" && l.stage !== "Lost");
 
@@ -93,27 +131,29 @@ function LeadsPage() {
         eyebrow="Pipeline"
         title="Leads"
         description={`${open.length} open leads worth ${formatCurrency(open.reduce((s, l) => s + l.value, 0))}. Click a row for the full story.`}
-        actions={<Button asChild>
-            <Link to="/leads/new">New lead</Link>
-          </Button>}
+        actions={
+          <>
+            <SearchField value={search} onChange={setSearch} placeholder="Company, contact or source" />
+            <FilterDrawer activeCount={activeFilters} onReset={resetFilters}>
+              <FilterChoice label="Stage" options={stages} value={stage} onChange={setStage} />
+              <FilterChoice label="Owner" options={owners} value={owner} onChange={setOwner} />
+              <FilterChoice label="Source" options={sources} value={source} onChange={setSource} />
+            </FilterDrawer>
+            <Button asChild>
+              <Link to="/leads/new">New lead</Link>
+            </Button>
+          </>
+        }
       />
 
-      <Tabs value={filter} onValueChange={setFilter}>
-        <TabsList className="flex-wrap">
-          {filters.map((f) => (
-            <TabsTrigger key={f} value={f}>
-              {f}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
+      <FilterSummary shown={rows.length} total={leads.length} noun="leads" />
 
       <RecordTable
         rows={rows}
         columns={columns}
         activeId={active?.id}
         onRowClick={setActive}
-        empty={isLoading ? "Loading leads…" : "No leads in this stage."}
+        empty={isLoading ? "Loading leads…" : "No leads match these filters."}
       />
 
       <DetailSheet
